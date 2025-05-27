@@ -1,0 +1,20 @@
+@import url('https://fonts.googleapis.com/css2?family=Gluten:wght@100..900&family=Manrope:wght@200..800&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  --font-gluten: 'Gluten', 'sans-serif';
+  --font-manrope: 'Manrope', 'sans-serif';
+}
+
+button {
+  cursor: pointer;
+}
+
+.nuka-page-indicator{
+  background-color: #a3a3a3!important;
+}
+
+.nuka-page-indicator.nuka-page-indicator-active{
+  background-color: #404040!important;
+}
