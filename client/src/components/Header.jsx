@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react'
 import logo from '../assets/logo.png'
 import { GrCart } from "react-icons/gr"
 import { LuCircleUserRound } from "react-icons/lu"
-import { IoFastFoodOutline } from "react-icons/io5";
+import { IoFastFoodOutline } from "react-icons/io5"
+import { useUser } from '../contexts/UserContext'
+import { useNavigate, Link } from 'react-router-dom'
 
 export default function Header() {
   const [itemCount, setItemCount] = useState(0)
@@ -24,55 +26,58 @@ export default function Header() {
     return () => clearInterval(interval)
   }, [])
 
+  const { user } = useUser()
+
+  const navigate = useNavigate()
+
+  const handleUserClick = () => {
+    if (user) {
+      navigate(`/user/${user.id}`)
+    } else {
+      navigate('/login')
+    }
+  }
+
   return (
     <header className="p-4">
       <div className="container mx-auto flex items-center justify-between h-[80px]">
-        <div className="flex items-center space-x-4">
-          <img src={logo} alt="Logo" className="h-8 w-auto" />
-          <a href="/">
-            <h1 className="text-3xl lg-text-4xl font-semibold mt-2 text-neutral-800 font-gluten">DroneDelight</h1>
-          </a>
-        </div>
 
-                <nav>
-          <ul className="">
-            <li>
-              <a href="/menu" className="text-amber-600 hover:text-amber-500 font-semibold flex items-center space-x-1">
-                <IoFastFoodOutline className='text-xl mt-[-7px]'/>
-                <span>Foods</span>
-              </a>
-            </li>
-            {/* <li><a href="/" className="hover:text-gray-900">About us</a></li>
-            <li><a href="/" className="hover:text-gray-900">Contacts</a></li> */}
-          </ul>
-        </nav>
+        <Link to="/" className="flex items-center space-x-4">
+          <img src={logo} alt="Logo" className="h-8 w-8" />
+          <h1 className="text-3xl lg-text-4xl font-semibold mt-2 text-neutral-800 hidden lg:inline font-gluten">DroneDelight</h1>
+        </Link>
 
         <nav>
-          <ul className="flex items-center space-x-6 text-gray-700">
-            {/* <li>
-              <a href="/menu" className="text-orange-700 hover:text-orange-900 font-semibold flex items-center space-x-1">
-                <IoFastFoodOutline className='text-xl mt-[-7px]'/>
-                <span>Foods</span>
-              </a>
-            </li> */}
-            <li><a href="/" className="hover:text-gray-900">About us</a></li>
-            <li><a href="/" className="hover:text-gray-900">Contacts</a></li>
+          <ul className="">
+            <li>
+              <Link to="/menu" className="text-amber-600 hover:text-amber-500 font-semibold flex items-center space-x-1">
+                <IoFastFoodOutline className='text-2xl mt-[-7px]' />
+                <span className=''>Foods</span>
+              </Link>
+            </li>
           </ul>
         </nav>
 
-        <div className="flex items-center space-x-6 relative">
-          <a href="/order" className="text-neutral-800 hover:text-neutral-700 text-2xl">
-            <LuCircleUserRound />
-          </a>
+        <nav className='hidden lg:block'>
+          <ul className="flex items-center space-x-6">
+            <li><Link to="/" className="hover:text-neutral-500">About us</Link></li>
+            <li><Link to="/" className="hover:text-neutral-500">Contacts</Link></li>
+          </ul>
+        </nav>
 
-          <a href="/order" className="text-neutral-800 hover:text-neutral-700 text-2xl relative">
+        <div className="flex items-center gap-4 lg:space-x-6 relative">
+          <button onClick={handleUserClick} className="text-neutral-800 hover:text-neutral-500 text-2xl">
+            <LuCircleUserRound />
+          </button>
+
+          <Link to="/cart" className="text-neutral-800 hover:text-neutral-500 text-2xl relative">
             <GrCart />
             {itemCount > 0 && (
               <span className="absolute -top-2 -right-2 bg-red-700 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
                 {itemCount}
               </span>
             )}
-          </a>
+          </Link>
         </div>
       </div>
     </header>

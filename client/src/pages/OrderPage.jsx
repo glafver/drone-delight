@@ -1,133 +1,109 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
+import Confetti from 'react-dom-confetti'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
-import { RiDeleteBin5Line } from "react-icons/ri";
+import OrderItem from '../components/OrderItem'
+
+const config = {
+    angle: 90,
+    spread: 360,
+    startVelocity: 40,
+    elementCount: 70,
+    dragFriction: 0.12,
+    duration: 3000,
+    stagger: 3,
+    width: '10px',
+    height: '10px',
+    colors: ['#d97706', '#10b981', '#ec4899', '#06b6d4', '#8b5cf6']
+}
 
 export default function OrderPage() {
-  const [order, setOrder] = useState({ items: [], total: 0 })
-  const navigate = useNavigate()
+    const { id } = useParams()
+    const location = useLocation()
+    const isNewOrder = location.pathname.includes('new')
+    const [order, setOrder] = useState(null)
+    const [active, setActive] = useState(false)
 
-  useEffect(() => {
-    const stored = localStorage.getItem('order')
-    if (stored) {
-      setOrder(JSON.parse(stored))
-    }
-  }, [])
+    const navigate = useNavigate()
 
-  const updateOrder = (items) => {
-    const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
-    const count = items.reduce((sum, item) => sum + item.quantity, 0)
-    const newOrder = { items, total, count }
-    setOrder(newOrder)
-    setOrder(newOrder)
-    localStorage.setItem('order', JSON.stringify(newOrder))
-  }
+    useEffect(() => {
+        const timer = setTimeout(() => setActive(true), 500)
+        return () => clearTimeout(timer)
+    }, [])
 
-  const increaseQty = (id) => {
-    const items = order.items.map(item =>
-      item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+    useEffect(() => {
+        const fetchOrder = async () => {
+            try {
+                const response = await fetch(`http://localhost:3001/orders/${id}`)
+                if (!response.ok) {
+                    throw new Error('Order not found')
+                }
+                const data = await response.json()
+                setOrder(data)
+            } catch (error) {
+                console.error(error)
+            }
+        }
+
+        fetchOrder()
+    }, [id])
+
+    if (!order) return <p className="text-center mt-10">Loading...</p>
+
+    return (
+        <>
+            <Header />
+            <div className="container grow mx-auto flex flex-col relative px-4 py-10">
+                {isNewOrder ? (
+                    <h1 className="text-4xl font-gluten text-amber-600 font-bold mb-10 text-center">Thanks for your order!</h1>
+                )
+                    : (
+                        <h1 className="text-4xl font-gluten text-amber-600 font-bold mb-10 text-center">Your order</h1>
+                    )
+                }
+
+                <div className='absolute w-full flex justify-center lg:pt-50'>
+                    <Confetti active={active && isNewOrder} config={config} />
+                </div>
+
+                <div className="w-full max-w-xl bg-white p-12 rounded-lg shadow-md mx-auto mb-12">
+                    <p className="mb-6 text-xl"><strong>Order ID:</strong> {order.id}</p>
+                    <p className="mb-6"><strong>Date:</strong> {new Date(order.date).toLocaleDateString()}</p>
+
+                    <p className="mb-2"><strong>Name:</strong> {order.name}</p>
+                    <p className="mb-2"><strong>Email:</strong> {order.email}</p>
+                    <p className="mb-2"><strong>Phone:</strong> {order.phone}</p>
+                    <p className="mb-6"><strong>Address:</strong> {order.address}</p>
+
+                    <ul className="list-disc mb-6">
+                        {order.order.items.map(item => (
+                            <OrderItem item={item} key={item.id} />
+                        ))}
+                    </ul>
+
+                    <p className="text-xl"><strong>Total:</strong> {order.order.total} kr</p>
+                </div>
+                {isNewOrder ? (
+                <button
+                    onClick={() => navigate('/menu')}
+                    className="w-max px-6 py-3 bg-amber-600 text-white font-semibold rounded hover:bg-amber-500 transition mx-auto"
+                >
+                    Go to Menu
+                </button>
+                )
+                    : (
+                <button
+                    onClick={() => navigate(-1)}
+                    className="w-max px-6 py-3 bg-amber-600 text-white font-semibold rounded hover:bg-amber-500 transition mx-auto"
+                >
+                    Go Back
+                </button>
+                    )
+                }
+
+            </div>
+            <Footer />
+        </>
     )
-    updateOrder(items)
-  }
-
-  const decreaseQty = (id) => {
-    const items = order.items
-      .map(item =>
-        item.id === id ? { ...item, quantity: item.quantity - 1 } : item
-      )
-      .filter(item => item.quantity > 0)
-    updateOrder(items)
-  }
-
-  const removeItem = (id) => {
-    const items = order.items.filter(item => item.id !== id)
-    updateOrder(items)
-  }
-
-  const proceedToCheckout = () => {
-    navigate('/checkout')
-  }
-
-  return (
-    <>
-      <Header />
-      <div className="container grow mx-auto px-4 py-10">
-        <h1 className="text-4xl font-gluten text-amber-600 font-bold mb-10 text-center">My Order</h1>
-
-        {order.items.length === 0 ? (
-          <p className="text-center text-gray-600">Your order is empty.</p>
-        ) : (
-
-          <div>
-            <div className="flex flex-col gap-10 lg:hidden">
-              {order.items.map(item => (
-                <div key={item.id} className="bg-white shadow-md rounded-xl overflow-hidden flex flex-col gap-6 p-4">
-                  <div className='flex imens-center justify-between'>
-                    <img src={item.image} alt={item.name} className="w-24 h-24 object-cover rounded-lg" />
-                    <div className="flex items-center gap-5">
-                      <button onClick={() => decreaseQty(item.id)} className="px-3 py-1 font-bold text-emerald-500 text-lg">−</button>
-                      <span className="text-lg">{item.quantity}</span>
-                      <button onClick={() => increaseQty(item.id)} className="px-3 py-1 font-bold text-emerald-500 text-lg">+</button>
-                    </div>
-                    <button onClick={() => removeItem(item.id)} className="text-red-700 text-2xl">
-                      <RiDeleteBin5Line />
-                    </button>
-                  </div>
-                  <div className='flex justify-between'>
-                    <div className='flex items-center gap-6'>
-                      <h3 className="text-lg font-semibold">{item.name}</h3>
-                      <p className="text-amber-600 font-bold font-gluten text-lg">{item.price} kr</p>
-                    </div>
-                    <div className='font-bold text-lg'>
-                      {item.price * item.quantity} kr
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="hidden flex-col gap-10 lg:flex">
-              {order.items.map(item => (
-                <div key={item.id} className="bg-white shadow-md rounded-xl overflow-hidden flex items-center justify-between p-4">
-                  <div className='flex items-center gap-5 lg:gap-10 w-[230px]'>
-                    <img src={item.image} alt={item.name} className="w-24 h-24 object-cover rounded-lg" />
-                    <div>
-                      <h3 className="text-lg font-semibold">{item.name}</h3>
-                      <p className="text-amber-600 font-bold font-gluten text-lg">{item.price} kr</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between gap-5 lg:gap-10 w-[170px]">
-                    <button onClick={() => decreaseQty(item.id)} className="px-3 py-1 font-bold text-emerald-500 text-lg">−</button>
-                    <span className="text-lg">{item.quantity}</span>
-                    <button onClick={() => increaseQty(item.id)} className="px-3 py-1 font-bold text-emerald-500 text-lg">+</button>
-                  </div>
-                  <button onClick={() => removeItem(item.id)} className="text-red-700 text-2xl ml-4">
-                    <RiDeleteBin5Line />
-                  </button>
-                  <div className='font-bold text-lg w-[65px]'>
-                    {item.price * item.quantity} kr
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="text-right text-lg my-10 p-4">
-              Total: <span className='ms-10 font-bold'>{order.total} kr</span>
-            </div>
-
-            <div className="text-center">
-              <button
-                onClick={proceedToCheckout}
-                className="bg-emerald-500 hover:bg-emerald-400 transition text-white font-semibold py-3 px-6 rounded-lg"
-              >
-                Proceed to Checkout
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-      <Footer />
-    </>
-  )
 }
