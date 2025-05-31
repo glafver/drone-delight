@@ -8,6 +8,7 @@ import OrderItem from '../components/OrderItem'
 import { useUser } from '../contexts/UserContext'
 
 export default function CheckoutPage() {
+  const [rememberMe, setRememberMe] = useState(false)
   const [order, setOrder] = useState({ items: [], total: 0 })
   const [showPopup, setShowPopup] = useState(false)
   const [form, setForm] = useState({
@@ -27,6 +28,14 @@ export default function CheckoutPage() {
   const { user } = useUser()
 
   useEffect(() => {
+    const savedForm = localStorage.getItem('savedForm')
+    if (savedForm) {
+      setForm(JSON.parse(savedForm))
+      setRememberMe(true)
+    }
+  }, [])
+
+  useEffect(() => {
     const stored = localStorage.getItem('order')
     if (stored) {
       setOrder(JSON.parse(stored))
@@ -40,6 +49,11 @@ export default function CheckoutPage() {
   }
 
   const handleSubmit = (e) => {
+    if (rememberMe) {
+      localStorage.setItem('savedForm', JSON.stringify(form))
+    } else {
+      localStorage.removeItem('savedForm')
+    }
     e.preventDefault()
     setShowPopup(true)
   }
@@ -74,7 +88,7 @@ export default function CheckoutPage() {
       localStorage.removeItem('order')
       setShowPopup(false)
 
-      navigate(`/order/${savedOrder.id}`)
+      navigate(`/order/${savedOrder.id}/new`)
     } catch (error) {
       console.error(error)
       alert('There was a problem confirming your payment. Please try again.')
@@ -86,20 +100,20 @@ export default function CheckoutPage() {
       <Header />
       <div className="container grow mx-auto px-4 py-10">
         <form onSubmit={handleSubmit} >
-          <h1 className="text-4xl font-gluten text-amber-600 font-bold mb-10 text-center">Checkout</h1>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            <div>
+          <h1 className="text-4xl font-gluten text-amber-500 font-bold mb-10 text-center">Checkout</h1>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-48">
+            <div className='px-10'>
               {order.items.map(item => (
                 <OrderItem item={item} key={item.id} />
               ))}
-              <div className="text-right text-3xl font-bold mt-6 p-4">
-                Total: <span className="ms-6 text-emerald-500">{order.total} kr</span>
+              <div className="text-right text-2xl font-bold mt-6">
+                Total: <span className="ms-6 ">{order.total} kr</span>
               </div>
             </div>
 
 
             <div className="bg-white p-4 space-y-6">
-              <h3 className='text-2xl font-semibold text-amber-600'>Delivery Details</h3>
+              <h3 className='text-2xl font-semibold '>Delivery Details</h3>
               <div>
                 <label className="block font-medium mb-1">Name</label>
                 <input
@@ -108,7 +122,7 @@ export default function CheckoutPage() {
                   placeholder="John Doe"
                   value={form.name}
                   onChange={handleChange}
-                  className="w-full border border-gray-300 rounded px-4 py-2"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2"
                   required
                 />
               </div>
@@ -120,7 +134,7 @@ export default function CheckoutPage() {
                   placeholder="123 Main St, City, Country"
                   value={form.address}
                   onChange={handleChange}
-                  className="w-full border border-gray-300 rounded px-4 py-2"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2"
                   required
                 />
               </div>
@@ -132,7 +146,7 @@ export default function CheckoutPage() {
                   placeholder="john.doe@mail.com"
                   value={form.email}
                   onChange={handleChange}
-                  className="w-full border border-gray-300 rounded px-4 py-2"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2"
                   required
                 />
               </div>
@@ -146,12 +160,25 @@ export default function CheckoutPage() {
                   placeholder="+46 123 456 789"
                   value={form.phone}
                   onChange={handleChange}
-                  className="w-full border border-gray-300 rounded px-4 py-2"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2"
                   required
                 />
+
+              </div>
+              <div className="flex items-center gap-2 mt-4">
+                <input
+                  type="checkbox"
+                  id="rememberMe"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="w-4 h-4"
+                />
+                <label htmlFor="rememberMe" className="text-sm">
+                  Remember me
+                </label>
               </div>
               <div className='mt-12'>
-                <h3 className='text-2xl font-semibold text-amber-600'>Payment Method</h3>
+                <h3 className='text-2xl font-semibold '>Payment Method</h3>
                 <div className="flex flex-col gap-6 mt-6">
                   <label className="flex items-center gap-2">
                     <input
@@ -182,7 +209,7 @@ export default function CheckoutPage() {
           <div className="text-center pt-12 pb-2">
             <button
               type='submit'
-              className="bg-amber-600 hover:bg-amber-500 transition text-white font-semibold py-3 px-6 rounded-lg disabled:bg-gray-200 disabled:cursor-not-allowed"
+              className="bg-amber-500 hover:bg-amber-400 transition text-white font-semibold py-3 px-6 rounded-lg disabled:bg-gray-200 disabled:cursor-not-allowed"
               disabled={
                 !form.name.trim() ||
                 !form.address.trim() ||
@@ -196,34 +223,34 @@ export default function CheckoutPage() {
           </div>
           {showPopup && (
             <div className="fixed inset-0 bg-black/50 w-screen p-10 flex items-center justify-center z-50">
-              <div className="bg-white p-8 rounded-lg max-w-md w-full relative">
+              <div className="bg-white p-8 rounded-lg max-w-sm w-full relative">
                 <button
                   onClick={() => setShowPopup(false)}
-                  className="absolute top-2 right-2 text-gray-400 hover:text-black text-2xl"
+                  className="absolute top-2 right-4 text-gray-400 hover:text-black text-2xl"
                 >
                   &times;
                 </button>
 
                 {form.paymentMethod === 'swish' ? (
-                  <div className="text-center space-y-14 p-6">
+                  <div className="text-center space-y-8">
                     <img src={swishQR} alt="" className='' />
                     <button
                       type="button"
                       onClick={handleConfirmPayment}
-                      className="bg-amber-600 hover:bg-amber-500 text-white font-semibold py-3 px-6  rounded-lg"
+                      className="bg-amber-500 hover:bg-amber-400 w-full text-white font-semibold py-3 px-6  rounded-lg"
                     >
                       Confirm Payment
                     </button>
                   </div>
                 ) : (
                   <form className="space-y-4 text-center">
-                    <h2 className="text-xl font-semibold text-amber-600 text-center">Card Payment</h2>
+                    <h2 className="text-xl font-semibold text-amber-500 text-center">Card Payment</h2>
                     <input
                       name="cardNumber"
                       onChange={handleChange}
                       type="text"
                       placeholder="Card Number"
-                      className="w-full border border-gray-300 rounded px-4 py-2"
+                      className="w-full border border-gray-300 rounded-lg px-4 py-2"
                     />
                     <div className="flex gap-4">
                       <input
@@ -231,14 +258,14 @@ export default function CheckoutPage() {
                         onChange={handleChange}
                         type="text"
                         placeholder="MM/YY"
-                        className="w-1/2 border border-gray-300 rounded px-4 py-2"
+                        className="w-1/2 border border-gray-300 rounded-lg px-4 py-2"
                       />
                       <input
                         name="cvc"
                         onChange={handleChange}
                         type="text"
                         placeholder="CVC"
-                        className="w-1/2 border border-gray-300 rounded px-4 py-2"
+                        className="w-1/2 border border-gray-300 rounded-lg px-4 py-2"
                       />
                     </div>
                     <button
@@ -249,7 +276,7 @@ export default function CheckoutPage() {
                         !card.expiry.trim() ||
                         !card.cvc.trim()
                       }
-                      className="bg-amber-600 hover:bg-amber-500 text-white font-semibold py-3 px-6 mx-auto rounded-lg disabled:bg-gray-200 disabled:cursor-not-allowed"
+                      className="bg-amber-500 w-full hover:bg-amber-400 text-white font-semibold py-3 px-6 mx-auto rounded-lg disabled:bg-gray-200 disabled:cursor-not-allowed"
                     >
                       Confirm Payment
                     </button>

@@ -35,7 +35,7 @@ export default function PopularSection() {
 
   return (
     <section className="bg-warmGray-100 pb-20">
-      <h2 className="text-4xl font-gluten text-amber-600 font-bold mb-10 text-center">Our Popular Dishes</h2>
+      <h2 className="text-4xl font-gluten text-amber-500 px-10 font-bold lg:mb-10 text-center">Our Popular Dishes</h2>
 
       <Carousel
         slidesToShow={1}

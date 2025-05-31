@@ -44,13 +44,13 @@ export default function Header() {
 
         <Link to="/" className="flex items-center space-x-4">
           <img src={logo} alt="Logo" className="h-8 w-8" />
-          <h1 className="text-3xl lg-text-4xl font-semibold mt-2 text-neutral-800 hidden lg:inline font-gluten">DroneDelight</h1>
+          <p className="text-4xl lg-text-4xl font-semibold mt-2 text-neutral-800 hidden lg:inline font-gluten">DroneDelight</p>
         </Link>
 
         <nav>
           <ul className="">
             <li>
-              <Link to="/menu" className="text-amber-600 hover:text-amber-500 font-semibold flex items-center space-x-1">
+              <Link to="/menu" className="text-emerald-500 hover:text-emerald-400 font-semibold flex items-center space-x-1">
                 <IoFastFoodOutline className='text-2xl mt-[-7px]' />
                 <span className=''>Foods</span>
               </Link>

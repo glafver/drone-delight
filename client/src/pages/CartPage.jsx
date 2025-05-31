@@ -52,22 +52,30 @@ export default function CartPage() {
   return (
     <>
       <Header />
-      <div className="container grow mx-auto px-4 py-10">
-        <h1 className="text-4xl font-gluten text-amber-600 font-bold mb-10 text-center">My Order</h1>
+      <div className="container grow mx-auto px-8 lg:px-4 py-10">
+        <h1 className="text-4xl font-gluten text-amber-500 font-bold mb-10 text-center">My Cart</h1>
 
         {order.items.length === 0 ? (
-          <p className="text-center text-gray-600">Your order is empty.</p>
+          <div className="flex flex-col items-center justify-center">
+            <p className="text-center  mt-6">Your cart is empty.</p>
+            <button
+              onClick={() => navigate('/menu')}
+              className="w-max lg:mt-16 px-6 py-3 bg-emerald-500 text-white font-semibold rounded-lg hover:bg-emerald-400 transition mx-auto"
+            >
+              Go to Menu
+            </button>
+          </div>
         ) : (
 
           <div>
             <div className="flex flex-col gap-10 lg:hidden">
               {order.items.map(item => (
                 <div key={item.id} className="bg-white shadow-md rounded-xl overflow-hidden flex flex-col gap-6 p-4">
-                  <div className='flex imens-center justify-between'>
+                  <div className='flex justify-between'>
                     <img src={item.image} alt={item.name} className="w-24 h-24 object-cover rounded-lg" />
                     <div className="flex items-center gap-5">
                       <button onClick={() => decreaseQty(item.id)} className="px-3 py-1 font-bold text-emerald-500 text-lg">−</button>
-                      <span className="text-lg">{item.quantity}</span>
+                      <span className="">{item.quantity}</span>
                       <button onClick={() => increaseQty(item.id)} className="px-3 py-1 font-bold text-emerald-500 text-lg">+</button>
                     </div>
                     <button onClick={() => removeItem(item.id)} className="text-red-700 text-2xl">
@@ -77,7 +85,7 @@ export default function CartPage() {
                   <div className='flex justify-between'>
                     <div className='flex items-center gap-6'>
                       <h3 className="text-lg font-semibold">{item.name}</h3>
-                      <p className="text-amber-600 font-bold font-gluten text-lg">{item.price} kr</p>
+                      <p className="text-amber-500 font-bold text-lg">{item.price} kr</p>
                     </div>
                     <div className='font-bold text-lg'>
                       {item.price * item.quantity} kr
@@ -89,23 +97,23 @@ export default function CartPage() {
 
             <div className="hidden flex-col gap-10 lg:flex">
               {order.items.map(item => (
-                <div key={item.id} className="bg-white shadow-md rounded-xl overflow-hidden flex items-center justify-between p-4">
+                <div key={item.id} className="bg-white shadow-md rounded-lg overflow-hidden flex items-center justify-between p-4">
                   <div className='flex items-center gap-5 lg:gap-10 w-[230px]'>
                     <img src={item.image} alt={item.name} className="w-24 h-24 object-cover rounded-lg" />
                     <div>
-                      <h3 className="text-lg font-semibold">{item.name}</h3>
-                      <p className="text-amber-600 font-bold font-gluten text-lg">{item.price} kr</p>
+                      <h3 className="font-semibold">{item.name}</h3>
+                      <p className="text-amber-500 font-bold">{item.price} kr</p>
                     </div>
                   </div>
                   <div className="flex items-center justify-between gap-5 lg:gap-10 w-[170px]">
                     <button onClick={() => decreaseQty(item.id)} className="px-3 py-1 font-bold text-emerald-500 text-lg">−</button>
-                    <span className="text-lg">{item.quantity}</span>
+                    <span className="">{item.quantity}</span>
                     <button onClick={() => increaseQty(item.id)} className="px-3 py-1 font-bold text-emerald-500 text-lg">+</button>
                   </div>
                   <button onClick={() => removeItem(item.id)} className="text-red-700 text-2xl ml-4">
                     <RiDeleteBin5Line />
                   </button>
-                  <div className='font-bold text-lg w-[65px]'>
+                  <div className='font-bold w-[65px]'>
                     {item.price * item.quantity} kr
                   </div>
                 </div>

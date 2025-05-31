@@ -22,7 +22,7 @@ const LoginPage = () => {
 
             if (data.length > 0) {
                 const existingUser = data[0]
-                login({ id: existingUser.id, username: existingUser.username })
+                login({ id: existingUser.id, username: existingUser.username, favorites: existingUser.favorites || [] })
                 setError('')
                 navigate(`/user/${existingUser.id}`)
             } else {
@@ -37,7 +37,7 @@ const LoginPage = () => {
         <>
             <Header />
             <div className="container grow mx-auto flex items-start justify-center min-h-[70vh]">
-                <form onSubmit={handleSubmit} className="bg-white p-6 shadow-xl rounded w-full max-w-sm space-y-4 mb-12">
+                <form onSubmit={handleSubmit} className="bg-white p-6 shadow-xl rounded-lg w-full max-w-sm space-y-4 mb-12">
                     <h1 className="text-2xl font-semibold text-center">Login</h1>
 
                     <div>
@@ -46,7 +46,7 @@ const LoginPage = () => {
                             type="text"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
-                            className="w-full border border-gray-300 rounded px-4 py-2"
+                            className="w-full border border-gray-300 rounded-lg px-4 py-2"
                             required
                         />
                     </div>
@@ -57,7 +57,7 @@ const LoginPage = () => {
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full border border-gray-300 rounded px-4 py-2"
+                            className="w-full border border-gray-300 rounded-lg px-4 py-2"
                             required
                         />
                     </div>
@@ -66,7 +66,7 @@ const LoginPage = () => {
 
                     <button
                         type="submit"
-                        className="w-full bg-amber-600 text-white py-2 rounded hover:bg-amber-500 transition"
+                        className="w-full bg-amber-500 text-white py-2 rounded-lg hover:bg-amber-400 transition"
                     >
                         Login
                     </button>
@@ -76,7 +76,7 @@ const LoginPage = () => {
                         <button
                             type="button"
                             onClick={() => navigate('/register')}
-                            className="text-amber-600 hover:underline"
+                            className="text-amber-500 hover:underline"
                         >
                             Create an account
                         </button>
