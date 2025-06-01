@@ -9,7 +9,7 @@ export default function PopularSection() {
 
   useEffect(() => {
     axios
-      .get('http://localhost:3001/products?isPopular=true')
+      .get('/api/products?isPopular=true')
       .then((res) => setDishes(res.data.slice(0, 9)))
       .catch((err) => console.error(err))
   }, [])
@@ -50,11 +50,11 @@ export default function PopularSection() {
         {groupedDishes.map((group, index) => (
           <div key={index} className="flex gap-6 justify-center min-w-full p-10 lg:px-20">
             {group.map((dish) => (
-              <div key={dish.id} className="w-full max-w-sm">
-              <Card
-                key={dish.id}
-                dish={dish}
-              />
+              <div key={dish._id} className="w-full max-w-sm">
+                <Card
+                  key={dish._id}
+                  dish={dish}
+                />
               </div>
             ))}
           </div>

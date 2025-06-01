@@ -4,7 +4,7 @@ import menu from '../assets/menu.png';
 export default function OpenMenuSection() {
   const navigate = useNavigate()
   return (
-    <section className="flex flex-col md:flex-row items-stretch lg:mb-20 lg:h-[500px] bg-emerald-200">
+    <section className="flex flex-col md:flex-row items-stretch lg:mb-20 lg:h-[500px] rounded-lg bg-emerald-200">
       <div className='lg:w-7/12 '>
         <img src={menu} alt="" className='max-h-full mx-auto p-10 lg:p-16' />
       </div>

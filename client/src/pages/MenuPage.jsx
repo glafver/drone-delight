@@ -3,6 +3,7 @@ import Footer from '../components/Footer'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import Card from '../components/Card'
+import { Fade } from 'react-awesome-reveal'
 
 export default function MenuPage() {
   const [dishes, setDishes] = useState([])
@@ -12,9 +13,10 @@ export default function MenuPage() {
 
   useEffect(() => {
     axios
-      .get('http://localhost:3001/products')
+      .get('/api/products')
       .then((res) => setDishes(res.data))
       .catch((err) => console.error(err))
+
   }, [])
 
   const categories = [
@@ -31,6 +33,7 @@ export default function MenuPage() {
   return (
     <>
       <Header />
+      <Fade>
       <div className="container grow mx-auto py-10">
           <h1 className="text-4xl font-gluten text-amber-500 font-bold mb-10 text-center">Our Menu</h1>
 
@@ -58,12 +61,13 @@ export default function MenuPage() {
           <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-10">
             {filtered.map((dish) => (
               <Card
-                key={dish.id}
+                key={dish._id}
                 dish={dish}
               />
             ))}
           </div>
       </div>
+      </Fade>
       <Footer />
     </>
   )

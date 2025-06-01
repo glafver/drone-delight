@@ -22,33 +22,24 @@ const RegisterPage = () => {
     }
 
     try {
-      const res = await fetch(`http://localhost:3001/users?username=${form.username}`)
-      const existingUsers = await res.json()
-
-      if (existingUsers.length > 0) {
-        setError('Username is already taken')
-        return
-      }
-
-      const newUser = {
-        username: form.username,
-        password: form.password,
-        favorites: [],
-      }
-
-      const response = await fetch('http://localhost:3001/users', {
+      const response = await fetch('/api/users/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newUser),
-      })
+        body: JSON.stringify({
+          username: form.username,
+          password: form.password,
+          confirmPassword: form.confirmPassword,
+        }),
+      });
 
       if (response.ok) {
-        navigate('/login')
+        navigate('/login');
       } else {
-        setError('Failed to register user')
+        const data = await response.json();
+        setError(data.message || 'Failed to register user');
       }
-    } catch {
-      setError('Something went wrong')
+    } catch (error) {
+      setError('Something went wrong');
     }
   }
 
@@ -66,7 +57,7 @@ const RegisterPage = () => {
               name="username"
               value={form.username}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-amber-500"
               required
             />
           </div>
@@ -78,7 +69,7 @@ const RegisterPage = () => {
               name="password"
               value={form.password}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-amber-500"
               required
             />
           </div>
@@ -90,7 +81,7 @@ const RegisterPage = () => {
               name="confirmPassword"
               value={form.confirmPassword}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-amber-500"
               required
             />
           </div>

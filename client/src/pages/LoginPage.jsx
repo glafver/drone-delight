@@ -17,19 +17,30 @@ const LoginPage = () => {
         setError('')
 
         try {
-            const res = await fetch(`http://localhost:3001/users?email=${username}&password=${password}`)
-            const data = await res.json()
+            const res = await fetch('/api/users/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password }),
+            });
 
-            if (data.length > 0) {
-                const existingUser = data[0]
-                login({ id: existingUser.id, username: existingUser.username, favorites: existingUser.favorites || [] })
-                setError('')
-                navigate(`/user/${existingUser.id}`)
-            } else {
-                setError('Invalid username or password')
+            if (!res.ok) {
+                const errorData = await res.json();
+                setError(errorData.message || 'Login failed');
+                return;
             }
-        } catch {
-            setError('Something went wrong')
+
+            const data = await res.json();
+
+            login({
+                id: data.user.id,
+                username: data.user.username,
+                savedForm: data.user.savedForm || null,
+                favorites: data.user.favorites || [],
+            });
+            setError('');
+            navigate(`/user/${data.id}`);
+        } catch (error) {
+            setError('Something went wrong');
         }
     }
 
@@ -46,7 +57,7 @@ const LoginPage = () => {
                             type="text"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
-                            className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-amber-500"
                             required
                         />
                     </div>
@@ -57,7 +68,7 @@ const LoginPage = () => {
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-amber-500"
                             required
                         />
                     </div>

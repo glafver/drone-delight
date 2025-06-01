@@ -10,7 +10,7 @@ const OrderItem = ({item}) => {
                     <h3 className="font-semibold">{item.name}</h3>
                 </div>
             </div>
-            <p className="font-bold">{item.quantity}</p>
+            <p className="">{item.quantity}</p>
             <div className="font-bold">
                 {item.price * item.quantity} kr
             </div>

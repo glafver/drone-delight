@@ -13,7 +13,6 @@
     "@emotion/react": "^11.14.0",
     "@tailwindcss/vite": "^4.1.7",
     "axios": "^1.9.0",
-    "keen-slider": "^6.8.6",
     "nuka-carousel": "^8.2.0",
     "react": "^19.1.0",
     "react-awesome-reveal": "^4.3.1",

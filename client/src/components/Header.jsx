@@ -60,8 +60,8 @@ export default function Header() {
 
         <nav className='hidden lg:block'>
           <ul className="flex items-center space-x-6">
-            <li><Link to="/" className="hover:text-neutral-500">About us</Link></li>
-            <li><Link to="/" className="hover:text-neutral-500">Contacts</Link></li>
+            <li><Link to="/about" className="hover:text-neutral-500">About us</Link></li>
+            <li><Link to="/contacts" className="hover:text-neutral-500">Contacts</Link></li>
           </ul>
         </nav>
 

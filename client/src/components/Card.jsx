@@ -10,32 +10,32 @@ export default function Card({ dish }) {
 
   useEffect(() => {
     if (user) {
-      setIsFavorite(user.favorites?.some(fav => fav === dish.id))
+      setIsFavorite(user.favorites?.some(fav => fav === dish._id))
     }
-  }, [user, dish.id])
+  }, [user, dish._id])
 
   const toggleFavorite = async () => {
 
     const updatedFavorites = isFavorite
-      ? user.favorites.filter(id => id !== dish.id)
-      : [...user.favorites, dish.id]
+      ? user.favorites.filter(id => id !== dish._id)
+      : [...user.favorites, dish._id]
 
     try {
-      const res = await fetch(`http://localhost:3001/users/${user.id}`, {
+      const res = await fetch(`/api/users/update/${user.id}`, {
         method: 'PATCH',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ favorites: updatedFavorites })
-      })
+        body: JSON.stringify({ favorites: updatedFavorites }),
+      });
 
-      if (!res.ok) throw new Error('Failed to update favorites.')
+      if (!res.ok) throw new Error('Misslyckades med att uppdatera favoriter.');
 
-      const updatedUser = await res.json()
-      setUser(updatedUser)
-      setIsFavorite(!isFavorite)
+      const updatedUser = await res.json();
+      setUser(updatedUser);
+      setIsFavorite(!isFavorite);
     } catch (err) {
-      toast.error('Could not update favorites.')
+      toast.error('Kunde inte uppdatera favoriter.');
     }
   }
 
@@ -46,7 +46,7 @@ export default function Card({ dish }) {
       count: 0
     }
 
-    const existingItem = order.items.find(item => item.id === product.id)
+    const existingItem = order.items.find(item => item._id === product._id)
 
     if (existingItem) {
       existingItem.quantity += 1
@@ -99,7 +99,7 @@ export default function Card({ dish }) {
             >
               {isFavorite ? <BsBookmarkFill /> : <BsBookmark />}
             </button>
-            
+
           )}
         </div>
 

@@ -18,3 +18,7 @@ button {
 .nuka-page-indicator.nuka-page-indicator-active{
   background-color: #404040!important;
 }
+
+:root {
+ --toastify-color-success: #10b981!important;
+}

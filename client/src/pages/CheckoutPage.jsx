@@ -6,6 +6,8 @@ import swish from '../assets/swish-logo.svg'
 import swishQR from '../assets/swish-QR.png'
 import OrderItem from '../components/OrderItem'
 import { useUser } from '../contexts/UserContext'
+import axios from 'axios'
+import { Fade } from "react-awesome-reveal";
 
 export default function CheckoutPage() {
   const [rememberMe, setRememberMe] = useState(false)
@@ -28,10 +30,15 @@ export default function CheckoutPage() {
   const { user } = useUser()
 
   useEffect(() => {
-    const savedForm = localStorage.getItem('savedForm')
-    if (savedForm) {
-      setForm(JSON.parse(savedForm))
+    if (user && user.savedForm) {
       setRememberMe(true)
+      setForm(user.savedForm)
+    } else {
+      const savedForm = localStorage.getItem('savedForm')
+      if (savedForm) {
+        setForm(JSON.parse(savedForm))
+        setRememberMe(true)
+      }
     }
   }, [])
 
@@ -48,13 +55,19 @@ export default function CheckoutPage() {
     setCard({ ...card, [name]: value })
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault()
     if (rememberMe) {
       localStorage.setItem('savedForm', JSON.stringify(form))
+      if (user) {
+        await axios.patch(`/api/users/save-form/${user.id}`, {
+          savedForm: form,
+        });
+      }
     } else {
       localStorage.removeItem('savedForm')
     }
-    e.preventDefault()
+
     setShowPopup(true)
   }
 
@@ -62,15 +75,19 @@ export default function CheckoutPage() {
     try {
       const fullOrder = {
         ...form,
-        order,
-        payment: {
-          ...card
+        order: {
+          items: order.items.map(item => ({
+            product: item._id,
+            quantity: item.quantity
+          })),
+          total: order.total,
+          count: order.count
         },
         date: new Date().toISOString(),
         userId: user ? user.id : null
       }
 
-      const response = await fetch('http://localhost:3001/orders', {
+      const response = await fetch('/api/orders', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -95,34 +112,50 @@ export default function CheckoutPage() {
     }
   }
 
+  const handleRememberMeChange = (e) => {
+    setRememberMe(e.target.checked)
+    if (!e.target.checked) {
+      localStorage.removeItem('savedForm')
+      setForm({
+        name: '',
+        address: '',
+        phone: '',
+        email: '',
+        paymentMethod: 'swish'
+      })
+    }
+  }
+
   return (
     <>
       <Header />
       <div className="container grow mx-auto px-4 py-10">
+        <Fade>
         <form onSubmit={handleSubmit} >
           <h1 className="text-4xl font-gluten text-amber-500 font-bold mb-10 text-center">Checkout</h1>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-48">
-            <div className='px-10'>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
+            <div className='px-6 p-4'>
+              <h3 className='text-2xl font-semibold mb-6'>Ordered items</h3>
               {order.items.map(item => (
-                <OrderItem item={item} key={item.id} />
+                <OrderItem item={item} key={item._id} />
               ))}
-              <div className="text-right text-2xl font-bold mt-6">
+              <div className="text-right text-2xl font-semibold mt-6">
                 Total: <span className="ms-6 ">{order.total} kr</span>
               </div>
             </div>
 
 
-            <div className="bg-white p-4 space-y-6">
+            <div className="bg-white p-4 space-y-4">
               <h3 className='text-2xl font-semibold '>Delivery Details</h3>
               <div>
                 <label className="block font-medium mb-1">Name</label>
                 <input
                   type="text"
                   name="name"
-                  placeholder="John Doe"
+                  placeholder="Sven Svensson"
                   value={form.name}
                   onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-amber-500"
                   required
                 />
               </div>
@@ -131,10 +164,10 @@ export default function CheckoutPage() {
                 <input
                   type="text"
                   name="address"
-                  placeholder="123 Main St, City, Country"
+                  placeholder="Exempelgatan 12, 211 00 Malmö"
                   value={form.address}
                   onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-amber-500"
                   required
                 />
               </div>
@@ -143,10 +176,10 @@ export default function CheckoutPage() {
                 <input
                   type="email"
                   name="email"
-                  placeholder="john.doe@mail.com"
+                  placeholder="info@example.se"
                   value={form.email}
                   onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-amber-500"
                   required
                 />
               </div>
@@ -160,7 +193,7 @@ export default function CheckoutPage() {
                   placeholder="+46 123 456 789"
                   value={form.phone}
                   onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-amber-500"
                   required
                 />
 
@@ -170,7 +203,7 @@ export default function CheckoutPage() {
                   type="checkbox"
                   id="rememberMe"
                   checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
+                  onChange={(e) => handleRememberMeChange(e)}
                   className="w-4 h-4"
                 />
                 <label htmlFor="rememberMe" className="text-sm">
@@ -207,6 +240,12 @@ export default function CheckoutPage() {
 
           </div>
           <div className="text-center pt-12 pb-2">
+            <button
+              onClick={() => navigate(-1)}
+              className="text-amber-500 hover:underline transition py-3 px-6"
+            >
+              Back
+            </button>
             <button
               type='submit'
               className="bg-amber-500 hover:bg-amber-400 transition text-white font-semibold py-3 px-6 rounded-lg disabled:bg-gray-200 disabled:cursor-not-allowed"
@@ -286,6 +325,7 @@ export default function CheckoutPage() {
             </div>
           )}
         </form>
+        </Fade>
       </div>
       <Footer />
     </>
