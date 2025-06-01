@@ -3,11 +3,11 @@
     "json-server": "^1.0.0-beta.3"
   },
   "scripts": {
-    "server": "json-server --watch db.json --port 3001"
+    "start": "node server.js"
   },
   "name": "drone-delights-backend",
   "version": "1.0.0",
-  "description": "Backend for Drone Delights project using json-server",
+  "description": "Backend for Drone Delights project using Node.js and Express",
   "main": "index.js",
   "author": "",
   "license": "ISC",
