@@ -10,13 +10,13 @@ export default function MenuPage() {
   const [selected, setSelected] = useState(null)
 
   const filtered = selected ? dishes.filter(d => d.category === selected) : dishes
+  const baseUrl = import.meta.env.VITE_API_URL
 
   useEffect(() => {
     axios
-      .get('/api/products')
+      .get(`${baseUrl}/products`)
       .then((res) => setDishes(res.data))
       .catch((err) => console.error(err))
-
   }, [])
 
   const categories = [
@@ -34,7 +34,7 @@ export default function MenuPage() {
     <>
       <Header />
       <Fade>
-      <div className="container grow mx-auto py-10">
+        <div className="container grow mx-auto py-10">
           <h1 className="text-4xl font-gluten text-amber-500 font-bold mb-10 text-center">Our Menu</h1>
 
           <div className="flex flex-wrap overflow-x-auto gap-6 py-4 justify-center">
@@ -66,7 +66,7 @@ export default function MenuPage() {
               />
             ))}
           </div>
-      </div>
+        </div>
       </Fade>
       <Footer />
     </>

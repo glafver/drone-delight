@@ -8,6 +8,8 @@ export default function Card({ dish }) {
   const [isFavorite, setIsFavorite] = useState(false)
   const { user, setUser } = useUser()
 
+  const baseUrl = import.meta.env.VITE_API_URL
+
   useEffect(() => {
     if (user) {
       setIsFavorite(user.favorites?.some(fav => fav === dish._id))
@@ -15,13 +17,12 @@ export default function Card({ dish }) {
   }, [user, dish._id])
 
   const toggleFavorite = async () => {
-
     const updatedFavorites = isFavorite
       ? user.favorites.filter(id => id !== dish._id)
       : [...user.favorites, dish._id]
 
     try {
-      const res = await fetch(`/api/users/update/${user.id}`, {
+      const res = await fetch(`${baseUrl}/users/update/${user.id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

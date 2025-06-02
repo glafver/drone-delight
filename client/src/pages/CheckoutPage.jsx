@@ -28,6 +28,7 @@ export default function CheckoutPage() {
 
   const navigate = useNavigate()
   const { user } = useUser()
+  const baseUrl = import.meta.env.VITE_API_URL
 
   useEffect(() => {
     if (user && user.savedForm) {
@@ -60,7 +61,7 @@ export default function CheckoutPage() {
     if (rememberMe) {
       localStorage.setItem('savedForm', JSON.stringify(form))
       if (user) {
-        await axios.patch(`/api/users/save-form/${user.id}`, {
+        await axios.patch(`${baseUrl}/users/save-form/${user.id}`, {
           savedForm: form,
         });
       }
@@ -87,7 +88,7 @@ export default function CheckoutPage() {
         userId: user ? user.id : null
       }
 
-      const response = await fetch('/api/orders', {
+      const response = await fetch(`${baseUrl}/orders`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

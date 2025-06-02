@@ -7,9 +7,11 @@ export default function PopularSection() {
   const [dishes, setDishes] = useState([])
   const [isLarge, setIsLarge] = useState(false)
 
+    const baseUrl = import.meta.env.VITE_API_URL
+
   useEffect(() => {
     axios
-      .get('/api/products?isPopular=true')
+      .get(`${baseUrl}/products?isPopular=true`)
       .then((res) => setDishes(res.data.slice(0, 9)))
       .catch((err) => console.error(err))
   }, [])

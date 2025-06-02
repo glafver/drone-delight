@@ -8,6 +8,8 @@ const RegisterPage = () => {
   const [form, setForm] = useState({ username: '', password: '', confirmPassword: '' })
   const [error, setError] = useState('')
 
+  const baseUrl = import.meta.env.VITE_API_URL
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
@@ -22,7 +24,7 @@ const RegisterPage = () => {
     }
 
     try {
-      const response = await fetch('/api/users/register', {
+      const response = await fetch(`${baseUrl}/users/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

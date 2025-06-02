@@ -12,6 +12,7 @@ const UserPage = () => {
     const navigate = useNavigate()
 
     const { user, logout } = useUser()
+    const baseUrl = import.meta.env.VITE_API_URL
 
     useEffect(() => {
         if (!user) {
@@ -21,7 +22,7 @@ const UserPage = () => {
 
         const fetchOrders = async () => {
             try {
-                const res = await fetch(`/api/orders/user/${user.id}`)
+                const res = await fetch(`${baseUrl}/orders/user/${user.id}`)
                 const data = await res.json()
                 setOrders(data)
             } catch {
@@ -31,7 +32,7 @@ const UserPage = () => {
 
         const fetchFavorites = async () => {
             try {
-                const res = await fetch(`/api/products`)
+                const res = await fetch(`${baseUrl}/products`)
                 const allDishes = await res.json()
                 const favs = allDishes.filter(dish => user.favorites.includes(dish._id))
                 setFavoriteDishes(favs)

@@ -27,6 +27,7 @@ export default function OrderPage() {
     const [active, setActive] = useState(false)
 
     const navigate = useNavigate()
+      const baseUrl = import.meta.env.VITE_API_URL
 
     useEffect(() => {
         const timer = setTimeout(() => setActive(true), 500)
@@ -36,7 +37,7 @@ export default function OrderPage() {
     useEffect(() => {
         const fetchOrder = async () => {
             try {
-                const response = await fetch(`/api/orders/${id}`)
+                const response = await fetch(`${baseUrl}/orders/${id}`)
                 if (!response.ok) {
                     throw new Error('Order not found')
                 }
