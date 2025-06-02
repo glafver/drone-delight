@@ -16,7 +16,7 @@ export default function HomePage() {
 
     const checkServer = async () => {
       try {
-        const response = await fetch(`${baseUrl}/api/ping`);
+        const response = await fetch(`${baseUrl}/ping`);
         if (response.ok) {
           setLoading(false);
           clearInterval(intervalId);
