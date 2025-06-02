@@ -5,6 +5,7 @@ import HeroSection from '../components/HeroSection';
 import PopularSection from '../components/PopularSection';
 import OpenMenuSection from '../components/OpenMenuSection';
 import { Fade } from "react-awesome-reveal";
+import { PropagateLoader } from "react-spinners";
 
 export default function HomePage() {
   const [loading, setLoading] = useState(true);
@@ -37,9 +38,9 @@ export default function HomePage() {
       <>
         <Header />
         <div className="container grow mx-auto">
-          <div className="flex justify-center items-center min-h-screen">
-            <div className="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-16 w-16"></div>
-          </div>
+            <div className='flex justify-center items-center h-[60vh]'>
+              <PropagateLoader color='#a4f4cf' />
+            </div>
         </div >
         <Footer />
       </>

@@ -34,7 +34,7 @@ export default function MenuPage() {
     <>
       <Header />
       <Fade>
-        <div className="container grow mx-auto py-10">
+        <div className="container grow mx-auto py-10 min-h-screen">
           <h1 className="text-4xl font-gluten text-amber-500 font-bold mb-10 text-center">Our Menu</h1>
 
           <div className="flex flex-wrap overflow-x-auto gap-6 py-4 justify-center">
