@@ -21,6 +21,10 @@ app.use("/api/products", productRoutes);
 app.use("/api/orders", orderRoutes);
 app.use('/api/users', userRoutes);
 
+app.get('/api/ping', (req, res) => {
+  res.json({ status: 'ok' });
+});
+
 app.listen(PORT, () =>
   console.log(`Server running on port ${PORT}`)
 );
