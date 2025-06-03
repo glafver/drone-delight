@@ -5,7 +5,7 @@
 ---
 
 
-# 🥡 Projektbeskrivning
+## 🥡 Projektbeskrivning
 
 Projektet inleddes med en genomtänkt färgpalett och en första layoutskiss. För att skapa en modern och relevant upplevelse analyserades konkurrenters webbplatser, och inspiration hämtades från lösningar som fungerade särskilt väl. Ambitionen från start var att hålla designen **minimalistisk och modern**.
 
