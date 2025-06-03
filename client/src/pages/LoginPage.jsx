@@ -39,7 +39,7 @@ const LoginPage = () => {
                 favorites: data.user.favorites || [],
             });
             setError('');
-            navigate(`/user/${data.id}`);
+            navigate(`/user/${data.user.id}`);
         } catch (error) {
             setError('Something went wrong');
         }
