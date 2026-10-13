@@ -2,20 +2,21 @@ name: Deploy to Cloud Run
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   workflow_dispatch:
 
 env:
-  REGION: ${{ vars.GCP_REGION || 'europe-west1' }}
-  SERVICE: ${{ vars.CLOUD_RUN_SERVICE || 'drone-delight' }}
-  IMAGE: ${{ vars.GCP_REGION || 'europe-west1' }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.ARTIFACT_REGISTRY_REPO || 'drone-delight' }}/app
+  # Change these if you rename the GCP project / region / service.
+  PROJECT_ID: glafira-se
+  REGION: europe-west1
+  SERVICE: drone-delight
 
 jobs:
   deploy:
-    name: Build and deploy
     runs-on: ubuntu-latest
     permissions:
       contents: read
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -27,23 +28,18 @@ jobs:
 
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ env.PROJECT_ID }}
 
-      - name: Configure Docker for Artifact Registry
-        run: gcloud auth configure-docker "${{ env.REGION }}-docker.pkg.dev" --quiet
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - name: Authorize Docker push to Artifact Registry
+        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
 
       - name: Build and push image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: true
-          tags: |
-            ${{ env.IMAGE }}:${{ github.sha }}
-            ${{ env.IMAGE }}:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+        run: |
+          IMAGE=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.SERVICE }}:${{ github.sha }}
+          docker build -t "$IMAGE" .
+          docker push "$IMAGE"
+          echo "IMAGE=$IMAGE" >> "$GITHUB_ENV"
 
       - name: Deploy to Cloud Run
         id: deploy
@@ -51,15 +47,12 @@ jobs:
         with:
           service: ${{ env.SERVICE }}
           region: ${{ env.REGION }}
-          image: ${{ env.IMAGE }}:${{ github.sha }}
-          flags: |
-            --allow-unauthenticated
-            --port=8080
-            --memory=512Mi
+          image: ${{ env.IMAGE }}
+          flags: --allow-unauthenticated
           env_vars: |
             MONGO_URI=${{ secrets.MONGO_URI }}
             JWT_SECRET=${{ secrets.JWT_SECRET }}
-            JWT_EXPIRATION=${{ vars.JWT_EXPIRATION || '1h' }}
+            JWT_EXPIRATION=1h
 
-      - name: Summary
+      - name: Show URL
         run: echo "Deployed to ${{ steps.deploy.outputs.url }}" >> "$GITHUB_STEP_SUMMARY"

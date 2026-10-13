@@ -17,7 +17,7 @@ PROJECT_ID="${1:-}"
 REGION="${2:-europe-west1}"
 SERVICE="${3:-drone-delight}"
 AR_REPO="${4:-drone-delight}"
-SA_NAME="github-deployer"
+SA_NAME="github-actions"
 
 if [ -z "$PROJECT_ID" ]; then
   echo "Usage: bash setup.sh <PROJECT_ID> [REGION] [SERVICE] [AR_REPO]"
@@ -65,19 +65,14 @@ cat <<EOF
 ============================================================
 Done. Now add the following to the GitHub repository:
 
-Settings -> Secrets and variables -> Actions
+Settings -> Secrets and variables -> Actions, tab "Secrets":
 
-Secrets (tab "Secrets"):
   GCP_SA_KEY   = the full content of ${KEY_FILE}
   MONGO_URI    = your MongoDB Atlas connection string
   JWT_SECRET   = a long random string
 
-Variables (tab "Variables"):
-  GCP_PROJECT_ID = ${PROJECT_ID}
-  # optional, these are the defaults:
-  # GCP_REGION               = ${REGION}
-  # CLOUD_RUN_SERVICE        = ${SERVICE}
-  # ARTIFACT_REGISTRY_REPO   = ${AR_REPO}
+No variables are needed: project, region and service name live in
+.github/workflows/deploy.yml.
 
 Then push to main (or run the "Deploy to Cloud Run" workflow manually).
 ============================================================
