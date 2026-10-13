@@ -110,6 +110,40 @@ Cloud Run is stateless, so MongoDB must be hosted externally (for example MongoD
 Atlas). Cloud Run egress IP addresses are not static, so the Atlas cluster has to
 accept connections from `0.0.0.0/0` (or use a VPC connector).
 
+### Automatic deploy with GitHub Actions
+
+The workflow in [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) builds
+the image and deploys it to Cloud Run on every push to `main` (and on manual runs).
+Cloud Build is not involved — the image is built on the GitHub runner.
+
+One-time setup, run in the [Cloud Shell](https://console.cloud.google.com/) (it has
+`gcloud` installed and already authenticated):
+
+```bash
+bash deploy/setup-github-actions.sh <PROJECT_ID>
+```
+
+The script enables the required APIs, creates the `github-deployer` service account
+with the needed roles, creates the Artifact Registry repository, and writes a service
+account key. It then prints what to configure in the repository:
+
+Settings → Secrets and variables → Actions
+
+| Kind      | Name                   | Value                                   |
+| --------- | ---------------------- | --------------------------------------- |
+| Secret    | `GCP_SA_KEY`           | full content of the generated JSON key  |
+| Secret    | `MONGO_URI`            | MongoDB Atlas connection string         |
+| Secret    | `JWT_SECRET`           | a long random string                    |
+| Variable  | `GCP_PROJECT_ID`       | your Google Cloud project ID            |
+| Variable  | `GCP_REGION`           | optional, default `europe-west1`        |
+| Variable  | `CLOUD_RUN_SERVICE`    | optional, default `drone-delight`       |
+| Variable  | `ARTIFACT_REGISTRY_REPO` | optional, default `drone-delight`     |
+
+After that, pushing to `main` deploys automatically. The service URL is shown on the
+Cloud Run page and in the workflow run summary.
+
+### Manual deploy with gcloud
+
 Prerequisites: the [Google Cloud CLI](https://cloud.google.com/sdk/docs/install) and
 an authenticated account (`gcloud auth login`).
 
