@@ -30,8 +30,19 @@ npm start
 | Script      | Description                          |
 | ----------- | ------------------------------------ |
 | `npm start` | Start the server with `node server.js` |
+| `npm run seed` | Insert sample menu data (see below) |
 
 For development with auto-restart: `npx nodemon server.js --watch`.
+
+## Sample data
+
+`seed.js` contains sample menu data and is handy for local development. It replaces
+all existing products by default:
+
+```bash
+npm run seed           # clear and insert sample products
+npm run seed -- --keep # insert without clearing
+```
 
 ## API
 

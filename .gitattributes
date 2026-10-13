@@ -1,0 +1,14 @@
+* text=auto
+
+# Shell scripts must keep LF endings, otherwise the shebang breaks inside Docker.
+*.sh text eol=lf
+Dockerfile text eol=lf
+*.conf.template text eol=lf
+
+# Windows scripts
+*.ps1 text eol=crlf
+
+# Binaries
+*.png binary
+*.jpg binary
+*.svg text eol=lf

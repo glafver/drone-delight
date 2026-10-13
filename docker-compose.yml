@@ -1,0 +1,34 @@
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  app:
+    build:
+      context: .
+      args:
+        VITE_API_URL: /api
+    image: drone-delight:local
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+    environment:
+      MONGO_URI: mongodb://mongo:27017/drone-delight
+      JWT_SECRET: local-dev-secret-change-me
+      JWT_EXPIRATION: 1h
+      PORT: "8080"
+      SERVER_PORT: "3000"
+    ports:
+      - "${APP_PORT:-8090}:8080"
+
+volumes:
+  mongo-data:

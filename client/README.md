@@ -59,3 +59,12 @@ src/
 
 Deployed on Netlify. `netlify.toml` redirects every route to `/index.html` so that
 client-side routing keeps working on refresh.
+
+## Docker
+
+In the root Docker image the client is built with `VITE_API_URL=/api`, so it calls
+the API on the same origin and nginx proxies those requests to the backend. See the
+root [`README.md`](../README.md) for the Docker and Cloud Run setup.
+
+Note that Vite inlines `VITE_API_URL` at build time: changing it requires a rebuild,
+which is why the relative `/api` path is used inside the container.
