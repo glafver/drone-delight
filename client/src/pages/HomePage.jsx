@@ -13,24 +13,42 @@ export default function HomePage() {
   const baseUrl = import.meta.env.VITE_API_URL
 
   useEffect(() => {
+    let cancelled = false;
     let intervalId;
+    const startedAt = Date.now();
+
+    const stop = () => {
+      setLoading(false);
+      clearInterval(intervalId);
+    };
 
     const checkServer = async () => {
+      if (cancelled) return;
+
       try {
         const response = await fetch(`${baseUrl}/ping`);
         if (response.ok) {
-          setLoading(false);
-          clearInterval(intervalId);
+          stop();
+          return;
         }
       } catch (error) {
-        console.log(error)
+        console.log(error);
+      }
+
+      // Never leave the visitor on the spinner forever: if the API is still not
+      // reachable after a few seconds, render the page anyway.
+      if (Date.now() - startedAt > 6000) {
+        stop();
       }
     };
 
     checkServer();
-    intervalId = setInterval(checkServer, 2000);
+    intervalId = setInterval(checkServer, 1500);
 
-    return () => clearInterval(intervalId);
+    return () => {
+      cancelled = true;
+      clearInterval(intervalId);
+    };
   }, []);
 
   if (loading) {

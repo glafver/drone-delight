@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import menu from '../assets/menu.png';
+import menu from '../assets/menu.webp';
 
 export default function OpenMenuSection() {
   const navigate = useNavigate()

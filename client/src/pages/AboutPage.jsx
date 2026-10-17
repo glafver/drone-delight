@@ -1,7 +1,7 @@
 import React from 'react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
-import user from '../assets/user.png'
+import user from '../assets/user.webp'
 import { Fade } from "react-awesome-reveal";
 
 const AboutPage = () => {

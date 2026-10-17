@@ -4,6 +4,7 @@ import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { Fade } from "react-awesome-reveal";
+import { webpVariant } from '../helpers/imageSources'
 
 export default function CartPage() {
   const [order, setOrder] = useState({ items: [], total: 0 })
@@ -74,7 +75,10 @@ export default function CartPage() {
                 {order.items.map(item => (
                   <div key={item._id} className="bg-white shadow-md rounded-xl overflow-hidden flex flex-col gap-6 p-4">
                     <div className='flex justify-between'>
-                      <img src={item.image} alt={item.name} className="w-24 h-24 object-cover rounded-lg" />
+                      <picture>
+                <source srcSet={webpVariant(item.image)} type="image/webp" />
+                <img src={item.image} alt={item.name} className="w-24 h-24 object-cover rounded-lg" />
+              </picture>
                       <div className="flex items-center gap-5">
                         <button onClick={() => decreaseQty(item.id)} className="px-3 py-1 font-bold text-emerald-500 text-lg">−</button>
                         <span className="">{item.quantity}</span>
@@ -101,7 +105,10 @@ export default function CartPage() {
                 {order.items.map(item => (
                   <div key={item._id} className="bg-white shadow-md rounded-lg overflow-hidden flex items-center justify-between p-4">
                     <div className='flex items-center gap-5 lg:gap-10 w-[230px]'>
-                      <img src={item.image} alt={item.name} className="w-24 h-24 object-cover rounded-lg" />
+                      <picture>
+                <source srcSet={webpVariant(item.image)} type="image/webp" />
+                <img src={item.image} alt={item.name} className="w-24 h-24 object-cover rounded-lg" />
+              </picture>
                       <div>
                         <h3 className="font-semibold">{item.name}</h3>
                         <p className="text-amber-500 font-bold">{item.price} kr</p>

@@ -3,6 +3,7 @@ import { AttentionSeeker } from 'react-awesome-reveal'
 import { toast } from 'react-toastify'
 import { useUser } from '../contexts/UserContext'
 import { BsBookmark, BsBookmarkFill } from 'react-icons/bs'
+import { webpVariant } from '../helpers/imageSources'
 
 export default function Card({ dish }) {
   const [isFavorite, setIsFavorite] = useState(false)
@@ -63,11 +64,14 @@ export default function Card({ dish }) {
 
   return (
     <div className="bg-white rounded-lg p-6 shadow-md overflow-hidden flex flex-col h-full relative max-w-[300px] mx-auto">
-      <img
-        src={dish.image}
-        alt={dish.name}
-        className="w-full h-58 object-cover rounded-lg"
-      />
+      <picture>
+        <source srcSet={webpVariant(dish.image)} type="image/webp" />
+        <img
+          src={dish.image}
+          alt={dish.name}
+          className="w-full h-58 object-cover rounded-lg"
+        />
+      </picture>
       <div className='bg-neutral-800/0 absolute top-10 left-0 px-10 w-full flex justify-between'>
         {dish.isPopular && (
           <AttentionSeeker effect="pulse" triggerOnce={false} className=''>
