@@ -2,6 +2,19 @@
 
 @import "tailwindcss";
 
+/* Keep the layout width identical whether or not a vertical scrollbar is shown.
+   Without this, centred content jumps sideways when navigating between a long page
+   and a short one (the scrollbar is ~15 px wide on Windows). */
+html {
+  scrollbar-gutter: stable;
+}
+
+@supports not (scrollbar-gutter: stable) {
+  html {
+    overflow-y: scroll;
+  }
+}
+
 @theme {
   --font-gluten: 'Gluten', 'sans-serif';
   --font-manrope: 'Manrope', 'sans-serif';

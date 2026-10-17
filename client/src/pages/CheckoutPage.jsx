@@ -262,7 +262,7 @@ export default function CheckoutPage() {
             </button>
           </div>
           {showPopup && (
-            <div className="fixed inset-0 bg-black/50 w-screen p-10 flex items-center justify-center z-50">
+            <div className="fixed inset-0 bg-black/50 p-10 flex items-center justify-center z-50">
               <div className="bg-white p-8 rounded-lg max-w-sm w-full relative">
                 <button
                   onClick={() => setShowPopup(false)}
